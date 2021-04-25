@@ -40,7 +40,11 @@ int parse_command_line(char* command_string, StringNode** pPaths) {
                 break;
 
             case cd_cmd:
-                // Implement cd
+                if(change_dir(command_data->args) == 0) {
+                    char dir_name[MAX_STRING];
+                    fprintf(stdout, "Now operating in directory %s\n",
+                            getcwd(dir_name, MAX_STRING));
+                }
                 break;
 
             case path_cmd:
@@ -104,7 +108,7 @@ int parse_single_command(char *command_string, Command *command_data) {
 
         if (!strcmp(PIPE_OUT, arg_token)) {
             if (parse_pipe) {
-                error_print("multiple pipe symbols detected", FALSE);
+                error_print("multiple pipe symbols detected", 0);
                 return -1;
             }
 
@@ -115,7 +119,7 @@ int parse_single_command(char *command_string, Command *command_data) {
             strcpy(out_stream_name, arg_token);
         } else if (parse_pipe > 1) {
             error_print("output redirection should be the last argument", 
-                        FALSE);
+                        0);
             free(out_stream_name);
             return -1;
         } else {

@@ -6,12 +6,8 @@
 
 #include "imports.h"
 
-int path_choices = 2;
-char *initial_commands[] = {"/bin/", "/usr/bin/"};
-char **cmd_paths = initial_commands;
-
-
 Builtin get_builtin(char* command_name) {
+    // EDIT THIS IF BUILTINS CHANGE
     char *all_builtins[3] = {"cd", "path", "exit"};
 
     for (int i = cd_cmd; i <= exit_cmd; i++) {
@@ -23,6 +19,8 @@ Builtin get_builtin(char* command_name) {
     return invalid;
 }
 
+// Simple module-specific function for building a command path
+// from two strings into the given destination string
 void built_from_path(char *dest, char *command, char *path) {
     strcat(dest, path);
     strcat(dest, command);
@@ -37,26 +35,26 @@ StringNode *realloc_paths(StringNode *args, StringNode *paths) {
 
     fprintf(stdout, "Assigning new paths...\n");
     free_list(paths);
-    StringNode *new_paths = NULL;
+    StringNode *pNew = NULL;
     StringNode *pFirst = NULL;
 
     while (args != NULL) {
         pFirst = append(pFirst, args->string);
-        if (new_paths == NULL) {
-            new_paths = pFirst;
+        if (pNew == NULL) {
+            pNew = pFirst;
         }
         args = args->pNext;
     }
 
     fprintf(stdout, "All specified paths assigned.\n");
 
-    return new_paths;
+    return pNew;
 }
 
 char **build_from_list(int argc, StringNode *args) {
     char **argv = calloc((argc + 1), sizeof(char*));
     if (argv == NULL) {
-        error_print("malloc error", FALSE);
+        error_print("malloc error", 0);
         _exit(1);
     }
 
@@ -70,13 +68,28 @@ char **build_from_list(int argc, StringNode *args) {
     return argv;
 }
 
+int change_dir(StringNode *pArgs) {
+    if (pArgs->pNext == NULL) {
+        error_print("You must specify the directory to move to", 0);
+        return -1;
+    }
+
+    if (chdir(pArgs->pNext->string) == -1) {
+        fprintf(stderr, "Error: something went wrong while trying to move ");
+        fprintf(stderr, "to '%s'\n", pArgs->pNext->string);
+        return -1;
+    }
+
+    return 0;
+}
+
 void execute_command(Command *command_data) {
 
     char *full_command = calloc(1, MAX_STRING * 2 * sizeof(char));
     int out_file = STDOUT_FILENO;
 
     if (full_command == NULL) {
-        error_print("malloc error", FALSE);
+        error_print("malloc error", 0);
     } else { 
         if (command_data->out_stream != NULL) {
             out_file = open(command_data->out_stream, O_RDWR | O_TRUNC | O_CREAT, S_IRUSR | S_IWUSR );

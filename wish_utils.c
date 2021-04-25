@@ -37,6 +37,8 @@ char *trim(char *str) {
     // Convert the string into a single char and iterate
     // over the start while that char is space
     // This trims leading whitespace
+    //
+    // Note that isspace also catches other common whitespace characters
     while (isspace((unsigned char) *str)) {
         str++;
     }
@@ -67,14 +69,14 @@ StringNode *append(StringNode *pNode, char* string) {
     StringNode *pNew = calloc(1, sizeof(StringNode));
 
     if (pNew == NULL) {
-        error_print("malloc error", TRUE);
+        error_print("malloc error", 1);
     }
 
     pNew->pNext = NULL;
     pNew->string = malloc(sizeof(string));
 
     if (pNew->string == NULL) {
-        error_print("malloc error", TRUE);
+        error_print("malloc error", 1);
     }
 
     strcpy(pNew->string, string);

@@ -19,6 +19,6 @@ OBJECTS = wish_ui.o wish_core.o wish_utils.o wish_commands.o
 wish: $(OBJECTS)
 	$(CCOMPILER) -o $@ $^ $(CFLAGS)
 
+# For easy cleanup
 clean:
 	rm -f $(OBJECTS)
-	rm -f wish

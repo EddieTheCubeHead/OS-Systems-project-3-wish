@@ -50,14 +50,14 @@ int main(int argc, char *argv[]) {
     StringNode *path_list = calloc(1, sizeof(StringNode));
 
     if (path_list == NULL) {
-        error_print("malloc error", TRUE);
+        error_print("malloc error", 1);
     }
 
     path_list->pNext = NULL;
     path_list->string = malloc(sizeof("/bin/"));
 
     if (path_list->string == NULL) {
-        error_print("malloc error", TRUE);
+        error_print("malloc error", 1);
     }
 
     strcpy(path_list->string, "/bin/");
